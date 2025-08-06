@@ -40,7 +40,7 @@ spring:
             client-name: google
             client-id: ${sm://google-client-id}
             client-secret: ${sm://google-client-secret}
-            redirect-uri: "https://api.ittaeok.com/login/oauth2/code/{registrationId}" # SM 붙이기
+            redirect-uri: ${sm://google-redirect-uri}
             authorization-grant-type: authorization_code
             scope:
               - openid
@@ -50,7 +50,7 @@ spring:
             client-name: kakao
             client-id: ${sm://kakao-client-id}
             client-secret: ${sm://kakao-client-secret}
-            redirect-uri: "https://api.ittaeok.com/login/oauth2/code/{registrationId}" # SM 붙이기
+            redirect-uri: ${sm://kakao-redirect-uri}
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
             scope:
@@ -72,7 +72,7 @@ google:
   calendar:
     client-id: ${sm://google-client-id}
     client-secret: ${sm://google-client-secret}
-    redirect-uri: "https://api.ittaeok.com/oauth2/callback/google-calendar" # SM 붙이기
+    redirect-uri: ${sm://google-calendar-redirect-uri}
   api:
     key: ${sm://google-api-key}
 zoom:
@@ -95,8 +95,8 @@ logging:
             sql: info
 
 url:
-  backend: https://api.ittaeok.com # SM 붙이기
+  backend: ${sm://server-domain}
 front-server:
-  domain-A: https://ittaeok.com # SM 붙이기
-  domain-B: https://www.ittaeok.com # SM 붙이기
-  redirect-url: https://ittaeok.com/auth/callback # SM 붙이기
+  domain-A: ${sm://domain-A}
+  domain-B: ${sm://domain-B}
+  redirect-url: ${sm://client-redirect-url}

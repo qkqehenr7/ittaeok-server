@@ -42,7 +42,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     // 허용 도메인
     private final List<String> ALLOWED_DOMAINS = Arrays.asList(
-        frontServerDomainA, // frontend 로컬 도메인
+        frontServerDomainA,
         backendServer,
         "https://localhost:3000"
     );

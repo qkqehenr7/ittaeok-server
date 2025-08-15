@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: ${sm://db-url}
-    username: ${sm://db-username}
-    password: ${sm://db-password}
+    url: ${sm://db_url}
+    username: ${sm://db_username}
+    password: ${sm://db_password}
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10
@@ -26,10 +26,10 @@ spring:
       lifecycle-management: start-only
   data:
     redis:
-      host: ${sm://redis-host}
-      port: ${sm://redis-port}
+      host: ${sm://redis_host}
+      port: ${sm://redis_port}
       username: default
-      password: ${sm://redis-password}
+      password: ${sm://redis_password}
       ssl:
         enabled: true
   security:
@@ -38,9 +38,9 @@ spring:
         registration:
           google:
             client-name: google
-            client-id: ${sm://google-client-id}
-            client-secret: ${sm://google-client-secret}
-            redirect-uri: ${sm://google-redirect-uri}
+            client-id: ${sm://google_client_id}
+            client-secret: ${sm://google_client_secret}
+            redirect-uri: ${sm://google_redirect_uri}
             authorization-grant-type: authorization_code
             scope:
               - openid
@@ -48,9 +48,9 @@ spring:
               - profile
           kakao:
             client-name: kakao
-            client-id: ${sm://kakao-client-id}
-            client-secret: ${sm://kakao-client-secret}
-            redirect-uri: ${sm://kakao-redirect-uri}
+            client-id: ${sm://kakao_client_id}
+            client-secret: ${sm://kakao_client_secret}
+            redirect-uri: ${sm://kakao_redirect_uri}
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
             scope:
@@ -67,14 +67,14 @@ springdoc:
 jwt:
   expiration: 604800000
   refresh-expiration: 704800000
-  secret: ${sm://jwt-secret}
+  secret: ${sm://jwt_secret}
 google:
   calendar:
-    client-id: ${sm://google-client-id}
-    client-secret: ${sm://google-client-secret}
-    redirect-uri: ${sm://google-calendar-redirect-uri}
+    client-id: ${sm://google_client_id}
+    client-secret: ${sm://google_client_secret}
+    redirect-uri: ${sm://google_calendar_redirect_uri}
   api:
-    key: ${sm://google-api-key}
+    key: ${sm://google_api_key}
 zoom:
   client-id: ${sm://zoom-client-id}
   client-secret: ${sm://zoom-client-secret}
@@ -82,7 +82,7 @@ zoom:
   refresh-token: ${sm://zoom-refresh-token}
 kakao:
   middle-location:
-    api-key: ${sm://kakao-api-key}
+    api-key: ${sm://kakao_api_key}
 logging:
   level:
     org.springframework.cloud.gcp.secretmanager: DEBUG
@@ -95,8 +95,8 @@ logging:
             sql: info
 
 url:
-  backend: ${sm://server-domain}
+  backend: ${sm://server_domain}
 front-server:
-  domain-A: ${sm://domain-A}
-  domain-B: ${sm://domain-B}
-  redirect-url: ${sm://client-redirect-url}
+  domain-A: ${sm://domain_A}
+  domain-B: ${sm://domain_B}
+  redirect-url: ${sm://client_redirect_url}

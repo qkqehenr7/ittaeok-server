@@ -57,7 +57,7 @@ public class ScheduleQueryService {
         Long eventId = schedule.getEvent().getId();
 
         List<ScheduleMember> scheduleMembers = scheduleMemberQueryRepository.findByScheduleId(
-            schedule.getId());
+                schedule.getId());
         Boolean bool = false;
         for (ScheduleMember scheduleMember : scheduleMembers) {
             if (scheduleMember.getMember().getId().equals(userId)) {
@@ -72,7 +72,7 @@ public class ScheduleQueryService {
             List<Long> voteLocationId = voteQueryRepository.findByScheduleIdAndMemberId(schedule.getId());
 
             ShowScheduleDto dto = ShowScheduleDto.fromEntity(meetingType, eventId, schedule,
-                scheduleMembers, workspaces, voteLocationId);
+                    scheduleMembers, workspaces, voteLocationId);
 
             return ShowScheduleDto.fromDto(dto);
         }
@@ -88,17 +88,27 @@ public class ScheduleQueryService {
         int voteCount = voteQueryRepository.findByScheduleId(scheduleId).size();
 
         ShowSuggestedLocationsDto finalDto = ShowSuggestedLocationsDto.fromMetroInfoDto(infoDto,
-            scheduleMemberNumber, voteCount, departLocationCount);
+                scheduleMemberNumber, voteCount, departLocationCount);
 
         return ShowSuggestedLocationsDto.fromDto(finalDto);
     }
 
     private List<MetroInfoDto> getMetroInfoDtos(Long scheduleId) {
-        List<Location> location = locationQueryRepository.findByScheduleId(scheduleId);
+        List<Location> locations = locationQueryRepository.findByScheduleId(scheduleId);
+        if (locations.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<Long> locationIds = locations.stream().map(Location::getId).toList();
+        List<MetroTransfer> allTransfers = metroTransferQueryRepository.findByLocationIdIn(locationIds);
+
+        // Group transfers by locationId
+        java.util.Map<Long, List<MetroTransfer>> transfersByLocation = allTransfers.stream()
+                .collect(java.util.stream.Collectors.groupingBy(mt -> mt.getLocation().getId()));
+
         List<MetroInfoDto> infoDto = new ArrayList<>();
-        for (Location l : location) {
-            List<MetroTransfer> transferForLocation = metroTransferQueryRepository.findByLocationId(
-                l.getId());
+        for (Location l : locations) {
+            List<MetroTransfer> transferForLocation = transfersByLocation.getOrDefault(l.getId(), new ArrayList<>());
             infoDto.add(MetroInfoDto.toDto(l, transferForLocation));
         }
         return infoDto;
@@ -125,14 +135,22 @@ public class ScheduleQueryService {
     }
 
     private List<VoteMemberDto> getVoteMemberDtos(Long scheduleId) {
-        List<ScheduleMember> scheduleMembers = scheduleMemberQueryRepository.findByScheduleId(
-            scheduleId);
+        List<ScheduleMember> scheduleMembers = scheduleMemberQueryRepository.findByScheduleId(scheduleId);
+        if (scheduleMembers.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<Long> memberIds = scheduleMembers.stream().map(ScheduleMember::getId).toList();
+        List<Vote> allVotes = voteQueryRepository.findByScheduleMemberIdIn(memberIds);
+
+        // Create a set of ScheduleMember IDs that have voted
+        java.util.Set<Long> votedMemberIds = allVotes.stream()
+                .map(v -> v.getScheduleMember().getId())
+                .collect(java.util.stream.Collectors.toSet());
 
         List<VoteMemberDto> voteMemberList = new ArrayList<>();
-
         for (ScheduleMember sm : scheduleMembers) {
-            Vote vote = voteQueryRepository.findByScheduleMemberId(sm.getId());
-            if (vote != null) {
+            if (votedMemberIds.contains(sm.getId())) {
                 VoteMemberDto voteMemberDto = VoteMemberDto.toDto(sm.getMember());
                 voteMemberList.add(voteMemberDto);
             }
@@ -143,33 +161,33 @@ public class ScheduleQueryService {
     @Transactional(readOnly = true)
     public Schedule findScheduleById(Long scheduleId) {
         return scheduleQueryRepository.findById(scheduleId)
-            .orElseThrow(() -> new ScheduleNotFoundException(
-                GroupErrorCode.SCHEDULE_NOT_FOUND));
+                .orElseThrow(() -> new ScheduleNotFoundException(
+                        GroupErrorCode.SCHEDULE_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
     public Event findEventById(Long eventId) {
         return eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(
-            EventErrorCode.EVENT_NOT_FOUND));
+                EventErrorCode.EVENT_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
     public Location findLocationById(Long locationId) {
         return locationQueryRepository.findById(locationId)
-            .orElseThrow(() -> new LocationNotFoundException(
-                ScheduleErrorCode.LOCATION_NOT_FOUND));
+                .orElseThrow(() -> new LocationNotFoundException(
+                        ScheduleErrorCode.LOCATION_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
     public ScheduleMember findScheduleMemberById(Long scheduleMemberId) {
         return scheduleMemberQueryRepository.findById(scheduleMemberId)
-            .orElseThrow(() -> new ScheduleMemberNotFoundException(
-                ScheduleErrorCode.LOCATION_NOT_FOUND));
+                .orElseThrow(() -> new ScheduleMemberNotFoundException(
+                        ScheduleErrorCode.LOCATION_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
     public Workspace findWorkspaceById(Long workspaceId) {
         return workspaceQueryRepository.findById(workspaceId).orElseThrow(
-            () -> new WorkSpaceNotFoundException(ScheduleErrorCode.WORKSPACE_NOT_FOUND));
+                () -> new WorkSpaceNotFoundException(ScheduleErrorCode.WORKSPACE_NOT_FOUND));
     }
 }

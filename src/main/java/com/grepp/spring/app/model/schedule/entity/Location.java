@@ -25,7 +25,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Entity
 @Table(name = "Locations")
 @Getter
@@ -70,5 +69,18 @@ public class Location extends BaseEntity {
     // 장소가 삭제되면 그 장소에 대한 환승정보도 삭제
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MetroTransfer> metroTransfers = new ArrayList<>();
+
+    // --- Domain Logic Methods ---
+
+    public void addVoteCount() {
+        if (this.voteCount == null) {
+            this.voteCount = 0;
+        }
+        this.voteCount++;
+    }
+
+    public void determineAsWinner() {
+        this.status = VoteStatus.WINNER;
+    }
 
 }

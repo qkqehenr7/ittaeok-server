@@ -19,4 +19,6 @@ public interface LocationQueryRepository extends JpaRepository<Location, Long> {
     @Query("select l from Location l where l.id = :id")
     Optional<Location> findByIdWithPessimisticLock(@Param("id") Long id);
 
+    Optional<Location> findFirstByScheduleIdOrderByVoteCountDesc(Long scheduleId);
+
 }

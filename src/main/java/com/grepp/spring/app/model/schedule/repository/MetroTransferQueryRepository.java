@@ -11,4 +11,7 @@ public interface MetroTransferQueryRepository extends JpaRepository<MetroTransfe
     @Query("SELECT mt from MetroTransfer mt where mt.location.id = :locationId")
     List<MetroTransfer> findByLocationId(@Param("locationId") Long locationId);
 
+    @Query("SELECT mt from MetroTransfer mt where mt.location.id in :locationIds")
+    List<MetroTransfer> findByLocationIdIn(@Param("locationIds") List<Long> locationIds);
+
 }
